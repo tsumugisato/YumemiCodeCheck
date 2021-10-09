@@ -8,8 +8,8 @@
 
 import UIKit
 
-class SearchViewController: UITableViewController, UISearchBarDelegate {
-
+class SearchViewController: UITableViewController {
+    
     @IBOutlet weak var SearchBar: UISearchBar!
     
     var repository: [[String: Any]]=[]
@@ -25,6 +25,8 @@ class SearchViewController: UITableViewController, UISearchBarDelegate {
         SearchBar.text = "GitHubのリポジトリを検索できるよー"
         SearchBar.delegate = self
     }
+}
+extension SearchViewController:UISearchBarDelegate{
     
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         // ↓こうすれば初期のテキストを消せる
@@ -45,13 +47,13 @@ class SearchViewController: UITableViewController, UISearchBarDelegate {
             task = URLSession.shared.dataTask(with: URL(string: url)!) { (data, res, err) in
                 if let obj = try! JSONSerialization.jsonObject(with: data!) as? [String: Any] ,let items = obj["items"] as? [[String: Any]]{
                     self.repository = items
-                        DispatchQueue.main.async {
-                            self.tableView.reloadData()
-                        }
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
                 }
             }
-        // これ呼ばなきゃリストが更新されません
-        task?.resume()
+            // これ呼ばなきゃリストが更新されません
+            task?.resume()
         }
         
     }
